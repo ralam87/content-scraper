@@ -1,0 +1,15 @@
+{
+  "name": "content_scraper",
+  "version": "1.0.0",
+  "description": "my content scraper project",
+  "main": "scraper.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ruhull Alam",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "request": "^2.79.0"
+  }
+}
