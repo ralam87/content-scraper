@@ -8,6 +8,8 @@ var json2csv = require("json2csv"); //npm module
 const url =  "http://shirts4mike.com/shirt.php";
 var links = [];
 var storedInfo = [];		
+var csvFields = ["Title", "Price", "ImageURL", "URL", "Time"];	
+
 
 request (url,  function(error, response, body) { //this request is just to retrieve the rest of the links for the next request.
 	
@@ -31,13 +33,14 @@ request (url,  function(error, response, body) { //this request is just to retri
 				if (!error) {
 					var $ = cheerio.load(body);
 										
-				  var product= {
-                            title: $('.shirt-details h1').text(),
-							price: $('.shirt-details h1 span').text(),
-                            imageUrl: $('.shirt-picture span img').attr('src'),
-                            url : response.request.uri.href,                    
-                            time: new Date()
-                        };
+				  var product= {}
+                            product.Title = $('.shirt-details h1').text(),
+							product.Price = $('.shirt-details h1 span').text(),
+                            product.ImageURL = $('.shirt-picture span img').attr('src'),
+                            product.URL = response.request.uri.href,                    
+                            product.Time = new Date()
+                        
+						
 				} //end if
 				
 				storedInfo.push(product);
@@ -46,21 +49,27 @@ request (url,  function(error, response, body) { //this request is just to retri
                         if(!fs.existsSync(dir)) { 
                           fs.mkdirSync(dir);
                         }
-						
-					
-				var year = new Date().getFullYear();
+				
+								var year = new Date().getFullYear();
 				var month = new Date().getMonth();
 				var day = new Date().getDate();
 				var fullDate = `${year}-${month}-${day}`;		
 		
-			
-		createCSV(storedInfo, fullDate);
-		
+				json2csv({data: storedInfo, fields: csvFields}, function(error, csv) {
+
+										if (error) throw error;
+										fs.writeFile(`./data/${fullDate}.csv`, csv, function(error) {
+											if (error) throw error;
+												console.log(`${fullDate} file updated`);
+										}); //End fo writeFile
+
+									}); // End of json2csv method
+					
+		//createCSV(storedInfo, fullDate);
 				
 			}); //end request
-				
+			
 		} //end for loop
-		
 		
 	} else {//end if 
 	
